@@ -1,0 +1,23 @@
+{
+  "name": "motionanalysis",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NavneetSinghGill/MotionAnalysis.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/NavneetSinghGill/MotionAnalysis/issues"
+  },
+  "homepage": "https://github.com/NavneetSinghGill/MotionAnalysis#readme",
+  "dependencies": {
+    "google-trends-api": "^4.9.0",
+    "request": "^2.88.2"
+  }
+}
