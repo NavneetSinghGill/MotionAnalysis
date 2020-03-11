@@ -18,6 +18,8 @@
   "homepage": "https://github.com/NavneetSinghGill/MotionAnalysis#readme",
   "dependencies": {
     "google-trends-api": "^4.9.0",
-    "request": "^2.88.2"
+    "mongodb": "^3.5.4",
+    "request": "^2.88.2",
+    "translate": "^1.1.1"
   }
 }
