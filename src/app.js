@@ -26,7 +26,9 @@ const fetchTumblrData = (tag, callback) => {
               return filterObject.summary.length != 0
             })
 
-            databaseHandler.addDataToTumblr(result)
+            databaseHandler.connectMongoClient(() => {
+              databaseHandler.addDataToTumblr(result)
+            })
             // console.log(result)
             fs.writeFileSync('BigdataTestApiResult.txt',result)
         } else {
