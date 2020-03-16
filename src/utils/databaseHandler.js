@@ -17,10 +17,20 @@ const connectMongoClient = (callback) => {
     })
 }
 
-const fetchTumblrData = (tag, callback) => {
-    const url = 'https://api.tumblr.com/v2/tagged?api_key=sCRb3P9GE60ZqQJseEPyo6AYDOcZaWo6Ba9u6xXjLgk8qiiGua&tag=' + tag
-    //'https://api.twitter.com/1.1/trends/available.json'
+const fetchTumblrData = (tag, numberOfDays) => {
+    var date = new Date();
+    for(let count = 0; count < numberOfDays; count++) {
+        console.log('count: '+ count + ' ', Math.floor(date/1000));
+        var newDate = (new Date()).setDate(date.getDate())
+        fetchTumblrDataForaTimeStamp(tag, newDate)
+        date.setDate(date.getDate() - 1)
+    }
+}
 
+const fetchTumblrDataForaTimeStamp = (tag, date) => {
+    const url = 'https://api.tumblr.com/v2/tagged?api_key=sCRb3P9GE60ZqQJseEPyo6AYDOcZaWo6Ba9u6xXjLgk8qiiGua&tag=' + encodeURIComponent(tag) + '&before?=' + Math.floor(date/1000)
+    //'https://api.twitter.com/1.1/trends/available.json'
+    console.log(url)
     request({url, json: true}, (error, {body}) => {
         if (!error) {
           let count = 0;
@@ -28,9 +38,11 @@ const fetchTumblrData = (tag, callback) => {
             let result = body.response.map((traversalObject) => {
               count++;
               //Extract info here
-              
+              console.log('return ' + Math.floor(date/1000) + ' ' + date/1000)
               return {
-                timestamp: Date.now(),
+                imageUrl: traversalObject.image_permalink,
+                link: traversalObject.link_url,
+                timestamp: Math.floor(date/1000),
                 short_url: traversalObject.short_url,
                 summary: traversalObject.summary
               }
@@ -43,7 +55,7 @@ const fetchTumblrData = (tag, callback) => {
               addDataToTumblr(result)
             })
             // console.log(result)
-            fs.writeFileSync('BigdataTestApiResult.txt',result)
+            // fs.writeFileSync('BigdataTestApiResult.txt',result)
         } else {
             console.log(error)
         }
