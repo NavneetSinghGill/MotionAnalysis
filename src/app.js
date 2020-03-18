@@ -23,7 +23,11 @@ app.get('', (req, res) => {
 
 app.get('/search', (req, res) => {
     //Fetch tumblr data and store in the given database
-    databaseHandler.tumblr.fetchTumblrData(req.query.tag,7)
+    databaseHandler.connectMongoClient(() => {
+        databaseHandler.tumblr.fetchTumblrData(req.query.tag,req.query.days, () => {
+            res.send('JOKEEEEE');
+        });
+    })
 })
 
 let port = 3000
