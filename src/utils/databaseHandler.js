@@ -38,10 +38,11 @@ const fetchTumblrDataForaTimeStamp = (tag, date) => {
             let result = body.response.map((traversalObject) => {
               count++;
               //Extract info here
-              console.log('return ' + Math.floor(date/1000) + ' ' + date/1000)
+            //   console.log('return ' + Math.floor(date/1000) + ' ' + date/1000)
+              console.log(traversalObject.image_permalink)
               return {
-                imageUrl: traversalObject.image_permalink,
-                link: traversalObject.link_url,
+                ...traversalObject.image_permalink && {imageUrl: traversalObject.image_permalink},
+                ...traversalObject.link_url && {link: traversalObject.link_url},
                 timestamp: Math.floor(date/1000),
                 short_url: traversalObject.short_url,
                 summary: traversalObject.summary
@@ -69,7 +70,7 @@ const addDataToTumblr = (entries) => {
         entries.map((entry) => {
             db.collection('Tumblr').insertOne(entry,{
             }).then((value) => {
-                console.log('fulfilled')
+                // console.log('fulfilled')
                 // console.log(value)
             }).catch((reason => {
                 console.log('rejected')
