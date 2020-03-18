@@ -21,11 +21,20 @@ app.get('', (req, res) => {
     res.sendFile('./views/mainPage/', { root: __dirname });
 })
 
-app.get('/search', (req, res) => {
-    //Fetch tumblr data and store in the given database
+app.get('/store', (req, res) => {
+    //Fetch data from public database and store in the private database
     databaseHandler.connectMongoClient(() => {
         databaseHandler.tumblr.fetchTumblrData(req.query.tag,req.query.days, () => {
-            res.send('JOKEEEEE');
+            res.send('success');
+        });
+    })
+})
+
+app.get('/search', (req, res) => {
+    //Fetch data from private database
+    databaseHandler.connectMongoClient(() => {
+        databaseHandler.tumblr.searchTumblrData((data) => {
+            res.send(data);
         });
     })
 })

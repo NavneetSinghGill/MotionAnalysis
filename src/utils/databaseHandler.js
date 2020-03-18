@@ -28,6 +28,7 @@ const fetchTumblrData = (tag, numberOfDays = 7, callback) => {
             //Callback after receiving all responses
             callbackCount++;
             if(callbackCount == numberOfDays) {
+                clientPersistent.close();
                 callback()
             }
         })
@@ -39,7 +40,7 @@ const fetchTumblrData = (tag, numberOfDays = 7, callback) => {
 const fetchTumblrDataForaTimeStamp = (tag, date, callback) => {
     const url = 'https://api.tumblr.com/v2/tagged?api_key=sCRb3P9GE60ZqQJseEPyo6AYDOcZaWo6Ba9u6xXjLgk8qiiGua&tag=' + encodeURIComponent(tag) + '&before?=' + Math.floor(date/1000)
     //'https://api.twitter.com/1.1/trends/available.json'
-    console.log(url)
+    // console.log(url)
 
     request({url, json: true}, (error, {body}) => {
         if (!error) {
@@ -102,8 +103,21 @@ const addDataToTumblr = (entries, callback) => {
     }
 }
 
+const searchTumblrData = (callback) => {
+    if(clientPersistent != undefined) {
+        let numberOfEntriesAcknowledged = 0;
+        const db = clientPersistent.db(DATABASE.DATABASENAME());
+        let data = db.collection('Tumblr').find();
+        data.toArray().then((response) => {
+            callback(response)
+            clientPersistent.close();
+        })
+    }
+}
+
 exports.connectMongoClient = connectMongoClient
 exports.tumblr = {
     addDataToTumblr,
-    fetchTumblrData
+    fetchTumblrData,
+    searchTumblrData
 }
