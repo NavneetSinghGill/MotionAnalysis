@@ -12,7 +12,7 @@ buttonSearch.addEventListener('click',(e) => {
 })
 
 const storeData = () => {
-    fetch('/store?tag=' + inputTopic.value).then((response) => {
+    fetch('/store?tag=' + inputTopic.value, {cache: "no-store"}).then((response) => {
         response.text().then((data) => {
             console.log(data)
 

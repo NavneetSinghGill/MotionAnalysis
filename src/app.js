@@ -12,7 +12,10 @@ if(process.argv[2] == 'production') {
 }
 
 const app = express();
-
+app.use((req, res, next) => {
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private')
+    next()
+  })
 const parentDirectoryPath = path.join(__dirname, '../public')
 app.use(express.static(parentDirectoryPath))
 
@@ -20,6 +23,7 @@ app.get('', (req, res) => {
     console.log(__dirname);
     res.sendFile('./views/mainPage/', { root: __dirname });
 })
+app.set('etag', false)
 
 app.get('/store', (req, res) => {
     //Fetch data from public database and store in the private database
