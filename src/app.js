@@ -30,12 +30,20 @@ app.get('/store', (req, res) => {
     })
 })
 
-app.get('/search', (req, res) => {
+app.get('/searchFromPrivateData', (req, res) => {
     //Fetch data from private database
     databaseHandler.connectMongoClient(() => {
         databaseHandler.tumblr.searchTumblrData((data) => {
             res.send(data);
         });
+    })
+})
+
+app.get('/clearData', (req, res) => {
+    databaseHandler.connectMongoClient(() => {
+        databaseHandler.tumblr.clearTumblrData(() => {
+            res.send('success')
+        })
     })
 })
 

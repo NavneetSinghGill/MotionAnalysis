@@ -115,9 +115,19 @@ const searchTumblrData = (callback) => {
     }
 }
 
+const clearTumblrData = (callback) => {
+    if(clientPersistent != undefined) {
+        const db = clientPersistent.db(DATABASE.DATABASENAME());
+        let data = db.collection('Tumblr').deleteMany().then((response) => {
+            callback();
+        });
+    }
+}
+
 exports.connectMongoClient = connectMongoClient
 exports.tumblr = {
     addDataToTumblr,
     fetchTumblrData,
-    searchTumblrData
+    searchTumblrData,
+    clearTumblrData
 }
