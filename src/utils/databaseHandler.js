@@ -39,52 +39,48 @@ const fetchTumblrData = (tag, numberOfDays = 7, callback) => {
     }
 }
 
-const fetchTumblrDataForaTimeStamp = (tag, date, callback) => {
-    const url = 'https://api.tumblr.com/v2/tagged?api_key=sCRb3P9GE60ZqQJseEPyo6AYDOcZaWo6Ba9u6xXjLgk8qiiGua&tag=' + encodeURIComponent(tag) + '&before?=' + Math.floor(date/1000)
+const fetchTumblrDataForaTimeStamp = ({tag, before, after}, callback) => {
+    const url = 'https://api.tumblr.com/v2/tagged?api_key=sCRb3P9GE60ZqQJseEPyo6AYDOcZaWo6Ba9u6xXjLgk8qiiGua&tag=' + encodeURIComponent(tag) + '&before=' + before
     //'https://api.twitter.com/1.1/trends/available.json'
-
-    https.request(url, (res) => {
-        let data;
-        res.on('data', (d) => {
-            data = data + d;
+    console.log('URL: '+ url)
+    https.request(url,{method: 'POST', headers: {'cache': 'no-cache'}}, (res) => {
+        var body = '';
+        
+        res.on('data', chunk => {
+            body += chunk.toString();
         })
-        res.on('end',(d)=> {
-            console.log(JSON.parse(data.toString()))
+
+        res.on('end',()=> {
+            
+            body = JSON.parse(body);
+            // console.log(('\n\n\n\n' + before + '.txt\n', body.response.map((to) => {
+            //     return to.summary
+            // })))
+          var count = 0;
+
+          //Filter information
+            var result = body.response.map((traversalObject) => {
+              count++;
+              //Extract info here
+              return {
+                ...traversalObject.image_permalink && {imageUrl: traversalObject.image_permalink},
+                ...traversalObject.link_url && {link: traversalObject.link_url},
+                timestamp: Math.floor(before/1000),
+                short_url: traversalObject.short_url,
+                summary: traversalObject.summary
+              }
+              
+            }).filter((filterObject) => {
+              return filterObject.summary.length != 0;
+            })
+            // console.log(result)
+
+            //Initiate storing result in db
+              addDataToTumblrCollection(result, callback);
+
+            // console.log(result)
         })
     }).end()
-
-    // axios.post(url).then(({data}) => {
-    //         console.log(('\n\n\n\n' + date + '.txt\n', data.response.map((to) => {
-    //             return to.summary
-    //         })))
-    //       let count = 0;
-
-    //       //Filter information
-    //         let result = data.response.map((traversalObject) => {
-    //           count++;
-    //           //Extract info here
-    //           return {
-    //             ...traversalObject.image_permalink && {imageUrl: traversalObject.image_permalink},
-    //             ...traversalObject.link_url && {link: traversalObject.link_url},
-    //             timestamp: Math.floor(date/1000),
-    //             short_url: traversalObject.short_url,
-    //             summary: traversalObject.summary
-    //           }
-              
-    //         }).filter((filterObject) => {
-    //           return filterObject.summary.length != 0;
-    //         })
-    //         // console.log(result)
-
-    //         //Initiate storing result in db
-    //           addDataToTumblrCollection(result, callback);
-
-    //         // console.log(result)
-    //         // fs.writeFileSync('BigdataTestApiResult.txt',result)
-    // }).catch(error => {
-    //     console.log(error)
-    //     callback(undefined, error);
-    // })
 }
 
 const addDataToTumblrCollection = (entries, callback) => {
@@ -99,19 +95,15 @@ const addDataToTumblrCollection = (entries, callback) => {
                 callback();
             }
         }
-
-        entries.map((entry) => {
-            db.collection('Tumblr').insertOne(entry,{
-            }).then((value) => {
-                // console.log('fulfilled')
-                // console.log(value)
-                checkCallback();
-            }).catch((reason => {
-                console.log('rejected')
-                console.log(reason)
-                checkCallback();
-            }))
-        })
+        db.collection('Tumblr').insertMany(entries).then((value) => {
+            // console.log('fulfilled')
+            // console.log(value)
+            callback()
+        }).catch((reason => {
+            console.log('rejected')
+            console.log(reason)
+            callback();
+        }))
     } else {
         console.log('Client is undefined')
     }
@@ -142,6 +134,7 @@ exports.connectMongoClient = connectMongoClient
 exports.tumblr = {
     addDataToTumblrCollection,
     fetchTumblrData,
+    fetchTumblrDataForaTimeStamp,
     searchTumblrData,
     clearTumblrData
 }

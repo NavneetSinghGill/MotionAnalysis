@@ -12,11 +12,28 @@ buttonSearch.addEventListener('click',(e) => {
 })
 
 const storeData = () => {
-    fetch('/store?tag=' + inputTopic.value, {cache: "no-store"}).then((response) => {
-        response.text().then((data) => {
-            console.log(data)
+    var date = new Date();
+    // fetch('/store?tag=' + inputTopic.value + '&date=' + (Math.floor(date/1000)), {cache: "no-store"}).then((response) => {
+    //     response.text().then((data) => {
+    //         console.log('LOOOOOOOOOOOOOOOOOL', data)
 
-            searchFromPrivateData();
+    //         searchFromPrivateData();
+    //     })
+    // })
+    recursiveStoreDate(date, 7);
+}
+
+const recursiveStoreDate = (date, iterations) => {
+    fetch('/store?tag=' + inputTopic.value + '&before=' + (Math.floor(date/1000)) + '&after=' + (Math.floor((date.getDate() - 1)/1000)), {cache: "no-store"}).then((response) => {
+        response.text().then((data) => {
+            console.log('LOOOOOOOOOOOOOOOOOL', data)
+
+            if(iterations == 1) {
+                searchFromPrivateData();
+            } else {
+                date.setDate(date.getDate() - 1)
+                recursiveStoreDate(date, --iterations)
+            }
         })
     })
 }

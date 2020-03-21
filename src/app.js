@@ -28,9 +28,12 @@ app.set('etag', false)
 app.get('/store', (req, res) => {
     //Fetch data from public database and store in the private database
     databaseHandler.connectMongoClient(() => {
-        databaseHandler.tumblr.fetchTumblrData(req.query.tag,req.query.days, () => {
+        databaseHandler.tumblr.fetchTumblrDataForaTimeStamp(req.query, () => {
             res.send('success');
-        });
+        })
+        // databaseHandler.tumblr.fetchTumblrData(req.query.tag,req.query.days, () => {
+        //     res.send('success');
+        // });
     })
 })
 
