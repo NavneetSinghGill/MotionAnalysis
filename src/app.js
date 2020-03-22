@@ -16,7 +16,7 @@ app.use((req, res, next) => {
     res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private')
     next()
   })
-const parentDirectoryPath = path.join(__dirname, '../public')
+const parentDirectoryPath = path.join(__dirname, '../src/views')
 app.use(express.static(parentDirectoryPath))
 
 app.get('', (req, res) => {

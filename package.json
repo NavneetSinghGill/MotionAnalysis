@@ -20,6 +20,8 @@
   "homepage": "https://github.com/NavneetSinghGill/MotionAnalysis#readme",
   "dependencies": {
     "axios": "^0.19.2",
+    "babel-cli": "^6.26.0",
+    "babel-preset-react-app": "^3.1.2",
     "express": "^4.17.1",
     "google-trends-api": "^4.9.0",
     "mongodb": "^3.5.4",
