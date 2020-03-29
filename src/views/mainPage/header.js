@@ -23,12 +23,24 @@ function SearchResults(props) {
 function SearchResultsDiv(props) {
 
     const allLi = props.elements.map(element => {
-        return (<li>{element.summary}</li>);
+        if(element.imageUrl != undefined) {
+            return (
+            <li style={{'flex-direction': 'column'}}>
+                <object type='text/html' data={element.imageUrl}/>
+                {element.summary}
+            </li>);
+        } else {
+            return (
+            <li style={{'flex-direction': 'column'}}>
+                {element.summary}
+            </li>);
+        }
     });
     const date = new Date(props.elements[0].timestamp * 1000000);
     const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     const dayName = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     const dateString = dayName[date.getDay()] + ', ' + date.getDate() + ' ' + monthNames[date.getMonth()] + ' \'' + date.getFullYear();
+    
     return (
         <div>
             <h4 style={{margin: '20px'}}>

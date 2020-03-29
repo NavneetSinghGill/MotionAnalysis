@@ -27,16 +27,26 @@ function SearchResults(props) {
 function SearchResultsDiv(props) {
 
     var allLi = props.elements.map(function (element) {
-        return React.createElement(
-            'li',
-            null,
-            element.summary
-        );
+        if (element.imageUrl != undefined) {
+            return React.createElement(
+                'li',
+                { style: { 'flex-direction': 'column' } },
+                React.createElement('object', { type: 'text/html', data: element.imageUrl }),
+                element.summary
+            );
+        } else {
+            return React.createElement(
+                'li',
+                { style: { 'flex-direction': 'column' } },
+                element.summary
+            );
+        }
     });
     var date = new Date(props.elements[0].timestamp * 1000000);
     var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     var dayName = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     var dateString = dayName[date.getDay()] + ', ' + date.getDate() + ' ' + monthNames[date.getMonth()] + ' \'' + date.getFullYear();
+
     return React.createElement(
         'div',
         null,
