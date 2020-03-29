@@ -13,17 +13,43 @@ function SearchHeader(props) {
 }
 
 function SearchResults(props) {
-    var list = props.elements.map(function (element) {
+
+    var list = props.elements.map(function (groupElement) {
+        return React.createElement(SearchResultsDiv, { elements: groupElement });
+    });
+    return React.createElement(
+        'div',
+        null,
+        list
+    );
+}
+
+function SearchResultsDiv(props) {
+
+    var allLi = props.elements.map(function (element) {
         return React.createElement(
             'li',
             null,
-            element
+            element.summary
         );
     });
+    var date = new Date(props.elements[0].timestamp * 1000000);
+    var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    var dayName = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    var dateString = dayName[date.getDay()] + ', ' + date.getDate() + ' ' + monthNames[date.getMonth()] + ' \'' + date.getFullYear();
     return React.createElement(
-        'ul',
+        'div',
         null,
-        list
+        React.createElement(
+            'h4',
+            { style: { margin: '20px' } },
+            dateString
+        ),
+        React.createElement(
+            'ul',
+            null,
+            allLi
+        )
     );
 }
 
@@ -58,13 +84,28 @@ var searchFromPrivateData = function searchFromPrivateData() {
     fetch('/searchFromPrivateData').then(function (response) {
         response.json().then(function (data) {
             var count = 0;
-            data = data.map(function (traversalObject) {
-                count++;
-                return traversalObject.summary;
-            });
+            // data = data.map((traversalObject) => {
+            //     count++;
+            //     return traversalObject.summary;
+            // })
+            var dayWiseData = [];
+            var currentDayData = void 0;
+            var currentDayTimeStamp = 0;
+
+            for (var i = 0; i < data.length; i++) {
+                console.log(i);
+                if (data[i].timestamp != currentDayTimeStamp) {
+                    currentDayTimeStamp = data[i].timestamp;
+                    // count = i;
+                    currentDayData = [];
+                    dayWiseData.push(currentDayData);
+                }
+                currentDayData.push(data[i]);
+                // dayWiseData[dayCount][i - count] = data[i];
+            }
             count = 0;
 
-            ReactDOM.render(React.createElement(SearchResults, { elements: data }), document.querySelector('#searchResults'));
+            ReactDOM.render(React.createElement(SearchResults, { elements: dayWiseData }), document.querySelector('#searchResults'));
         });
     });
 };

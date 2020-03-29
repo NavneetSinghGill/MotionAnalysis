@@ -9,11 +9,33 @@ function SearchHeader(props) {
 }
 
 function SearchResults(props) {
-    const list = props.elements.map(element => 
-        <li>{element}</li>
+
+    const list = props.elements.map(groupElement => 
+        <SearchResultsDiv elements={groupElement}/>
     )
     return (
-        <ul>{list}</ul>
+        <div>
+            {list}
+        </div>
+    );
+}
+
+function SearchResultsDiv(props) {
+
+    const allLi = props.elements.map(element => {
+        return (<li>{element.summary}</li>);
+    });
+    const date = new Date(props.elements[0].timestamp * 1000000);
+    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    const dayName = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    const dateString = dayName[date.getDay()] + ', ' + date.getDate() + ' ' + monthNames[date.getMonth()] + ' \'' + date.getFullYear();
+    return (
+        <div>
+            <h4 style={{margin: '20px'}}>
+                {dateString}
+            </h4>
+            <ul>{allLi}</ul>
+        </div>
     );
 }
 
@@ -48,14 +70,29 @@ const searchFromPrivateData = () => {
     fetch('/searchFromPrivateData').then((response) => {
         response.json().then((data) => {
             let count = 0;
-            data = data.map((traversalObject) => {
-                count++;
-                return traversalObject.summary;
-            })
+            // data = data.map((traversalObject) => {
+            //     count++;
+            //     return traversalObject.summary;
+            // })
+            let dayWiseData = [];
+            let currentDayData;
+            let currentDayTimeStamp = 0;
+
+            for(let i = 0; i<data.length; i++) {
+                console.log(i)
+                if(data[i].timestamp != currentDayTimeStamp) {
+                    currentDayTimeStamp = data[i].timestamp;
+                    // count = i;
+                    currentDayData = [];
+                    dayWiseData.push(currentDayData);
+                }
+                currentDayData.push(data[i]);
+                // dayWiseData[dayCount][i - count] = data[i];
+            }
             count = 0;
-            
+
             ReactDOM.render(
-            <SearchResults elements={data} />,
+            <SearchResults elements={dayWiseData} />,
             document.querySelector('#searchResults')
             );
         })
