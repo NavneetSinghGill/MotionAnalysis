@@ -6,10 +6,43 @@ function SearchHeader(props) {
         React.createElement('input', { id: 'inputTopic' }),
         React.createElement(
             'button',
-            { id: 'buttonSearch', onClick: buttonTapped },
+            { id: 'buttonSearch', style: {
+                    'margin-left': '20px'
+                }, onClick: buttonTapped },
             'Search'
         )
     );
+}
+
+function TrendsDiv(props) {
+    return React.createElement(
+        'div',
+        null,
+        React.createElement(TrendsButton, { name: 'Coronavirus' }),
+        React.createElement(TrendsButton, { name: 'Camila Cabello' }),
+        React.createElement(TrendsButton, { name: 'Stock' })
+    );
+}
+
+function TrendsButton(props) {
+    return React.createElement(
+        'button',
+        { style: {
+                'background-color': '#00cc00',
+                'border-radius': '5px',
+                // 'width': '50px',
+                'height': '30px',
+                'margin': '20px',
+                'margin-left': '40px' }, onClick: function onClick() {
+                return trendButtonTapped(props.name);
+            } },
+        props.name
+    );
+}
+
+function trendButtonTapped(value) {
+    inputTopic.value = value;
+    buttonTapped();
 }
 
 function SearchResults(props) {
@@ -65,6 +98,7 @@ function SearchResultsDiv(props) {
 
 var buttonTapped = function buttonTapped() {
     console.log('Searched: ' + inputTopic.value);
+    document.querySelector('#buttonSearch').value = 'Loading...';
     clearData(function () {
         storeData();
     });
@@ -116,6 +150,8 @@ var searchFromPrivateData = function searchFromPrivateData() {
             count = 0;
 
             ReactDOM.render(React.createElement(SearchResults, { elements: dayWiseData }), document.querySelector('#searchResults'));
+
+            document.querySelector('#buttonSearch').value = 'Search Again';
         });
     });
 };
@@ -130,3 +166,8 @@ var clearData = function clearData(callback) {
 
 var domContainer = document.querySelector('#searchHeader');
 ReactDOM.render(React.createElement(SearchHeader, null), domContainer);
+
+setTimeout(function () {
+    var trendsDiv = document.querySelector('#trendsDiv');
+    ReactDOM.render(React.createElement(TrendsDiv, null), trendsDiv);
+}, 2000);

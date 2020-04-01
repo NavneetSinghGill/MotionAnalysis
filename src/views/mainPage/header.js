@@ -3,9 +3,40 @@ function SearchHeader(props) {
     return (
         <div id="searchHeader" style={{padding: '20px', margin: '20px'}}>
             <input id='inputTopic'></input>
-            <button id="buttonSearch" onClick={buttonTapped}>Search</button>
+            <button id="buttonSearch" style={{
+                'margin-left': '20px'
+            }} onClick={buttonTapped}>Search</button>
         </div>
     );
+}
+
+function TrendsDiv(props) {
+    return (
+        <div>
+            <TrendsButton name='Coronavirus'/>
+            <TrendsButton name='Camila Cabello'/>
+            <TrendsButton name='Stock'/>
+        </div>
+    );
+}
+
+function TrendsButton(props) {
+    return (
+        <button style={{
+            'background-color': '#00cc00',
+            'border-radius': '5px',
+            // 'width': '50px',
+            'height': '30px',
+            'margin': '20px',
+            'margin-left': '40px'}} onClick={() => trendButtonTapped(props.name)}>
+                {props.name}
+                </button>
+    );
+}
+
+function trendButtonTapped(value) {
+    inputTopic.value = value;
+    buttonTapped();
 }
 
 function SearchResults(props) {
@@ -53,6 +84,7 @@ function SearchResultsDiv(props) {
 
 const buttonTapped = () => {
     console.log('Searched: ' + inputTopic.value)
+    document.querySelector('#buttonSearch').value = 'Loading...';
     clearData(() => {
         storeData()
     })
@@ -107,6 +139,8 @@ const searchFromPrivateData = () => {
             <SearchResults elements={dayWiseData} />,
             document.querySelector('#searchResults')
             );
+
+            document.querySelector('#buttonSearch').value = 'Search Again';
         })
     })
 }
@@ -121,3 +155,8 @@ const clearData = (callback) => {
 
 const domContainer = document.querySelector('#searchHeader');
 ReactDOM.render(<SearchHeader />, domContainer);
+
+setTimeout(() => {
+    const trendsDiv = document.querySelector('#trendsDiv');
+    ReactDOM.render(<TrendsDiv />, trendsDiv);
+}, 2000);
