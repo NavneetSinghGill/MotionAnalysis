@@ -11,11 +11,30 @@ if(process.argv[2] == 'production') {
     CONSTANTS.ISLOCALENVIRONMENT = true
 }
 
+const trackIP = true;
+var IPtrackingInProgress = false;
+
 const app = express();
 app.use((req, res, next) => {
     res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private')
     next()
-  })
+  });
+
+app.use((req, res, next) => {
+    //Logging
+    console.log('Log');
+    if(trackIP && !IPtrackingInProgress) {
+        IPtrackingInProgress = true;
+        databaseHandler.connectMongoClient(() => {
+            databaseHandler.log.ip(req.ip, () => {
+                trackIP = false;
+                IPtrackingInProgress = false;
+            });
+        })
+    }
+    next();
+})
+
 const parentDirectoryPath = path.join(__dirname, '../src/views')
 app.use(express.static(parentDirectoryPath))
 
@@ -54,7 +73,7 @@ app.get('/clearData', (req, res) => {
     })
 })
 
-let port = 3000
+let port = 3001
 app.listen(port, () => {
     console.log('Server is up and running on '+port)
 })

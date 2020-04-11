@@ -130,7 +130,22 @@ const clearTumblrData = (callback) => {
     }
 }
 
+const log = {
+    ip(address, callback) {
+        if (clientPersistent != undefined) {
+            const db = clientPersistent.db(DATABASE.DATABASENAME());
+            let data = db.collection('ip').insertOne({
+                ip: address,
+                date: (new Date()).toString()
+            }).then((response) => {
+                callback();
+            });
+        }
+    }
+}
+
 exports.connectMongoClient = connectMongoClient
+exports.log = log;
 exports.tumblr = {
     addDataToTumblrCollection,
     fetchTumblrData,
