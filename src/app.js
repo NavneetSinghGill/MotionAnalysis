@@ -73,7 +73,7 @@ app.get('/clearData', (req, res) => {
     })
 })
 
-let port = 3001
+const port = process.env.PORT || 3001
 app.listen(port, () => {
     console.log('Server is up and running on '+port)
 })
