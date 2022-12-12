@@ -22,7 +22,7 @@
     "axios": "^0.19.2",
     "babel-cli": "^6.26.0",
     "babel-preset-react-app": "^3.1.2",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "google-trends-api": "^4.9.0",
     "mongodb": "^3.5.4",
     "request": "^2.88.2",
